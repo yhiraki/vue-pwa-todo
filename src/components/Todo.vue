@@ -29,6 +29,10 @@
             <s v-if="i===1"> {{item.name}} </s>
             <span v-else> {{item.name}} </span>
           </v-list-tile-content>
+
+          <v-list-tile-action>
+            <v-icon @click="del(item)">close</v-icon>
+          </v-list-tile-action>
         </v-list-tile>
       </v-list>
     </template>
@@ -37,7 +41,10 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Watch } from 'vue-property-decorator'
+
+const storage = localStorage
+const KEY = 'todos'
 
 type TodoItem = {
   id: number;
@@ -59,6 +66,10 @@ export default class Todo extends Vue {
     return this.list.filter(t => !t.done)
   }
 
+  created () {
+    this.load()
+  }
+
   add () {
     if (this.todoName === '') return
     this.list.push({
@@ -69,8 +80,22 @@ export default class Todo extends Vue {
     this.todoName = ''
   }
 
+  del (item: TodoItem) {
+    this.list = this.list.filter(t => t.id !== item.id)
+  }
+
   toggleDone (item: TodoItem) {
     item.done = !item.done
+  }
+
+  @Watch('list', { deep: true })
+  private save () {
+    storage.setItem(KEY, JSON.stringify(this.list))
+  }
+
+  private load () {
+    const value = storage.getItem(KEY)
+    if (value) this.list = JSON.parse(value)
   }
 }
 </script>
