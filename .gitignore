@@ -1,3 +1,7 @@
+# firebase
+.firebaserc
+.firebase
+
 .DS_Store
 node_modules
 /dist
