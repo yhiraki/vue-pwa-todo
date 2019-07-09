@@ -95,7 +95,14 @@ export default class Todo extends Vue {
 
   private load () {
     const value = storage.getItem(KEY)
-    if (value) this.list = JSON.parse(value)
+    if (value) {
+      this.list = JSON.parse(value)
+      if (this.list.length){
+        for(const item of this.list)
+          this.lastId = Math.max(this.lastId, item.id)
+        this.lastId++
+      }
+    }
   }
 }
 </script>
